@@ -1,45 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'CanchasPage.dart';  // Importa la pantalla de canchas
+import 'CanchasPage.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailCtrl = TextEditingController();
   final TextEditingController passCtrl = TextEditingController();
 
-  // Método para verificar si el usuario ya existe en Firebase
-  Future<void> verificarUsuario(BuildContext context) async {
+  // Iniciar sesión (solo si ya existe)
+  Future<void> iniciarSesion(BuildContext context) async {
     String email = emailCtrl.text.trim();
     String pass = passCtrl.text.trim();
 
     if (email.isNotEmpty && pass.isNotEmpty) {
       try {
-        // Verificar si el usuario ya existe en Firebase
         QuerySnapshot snapshot = await FirebaseFirestore.instance
             .collection('usuarios')
             .where('correo', isEqualTo: email)
             .get();
 
-        // Si ya existe un usuario con ese correo
         if (snapshot.docs.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('✅ Usuario ya registrado. Iniciando sesión...')),
+            SnackBar(content: Text('✅ Bienvenido. Iniciando sesión...')),
           );
-          // Navegar a la pantalla de Canchas
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => CanchasPage()),
           );
         } else {
-          // Si no existe, crear el nuevo usuario en Firebase
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('❌ Usuario no registrado. Primero debes registrarte.')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ Error al procesar la solicitud')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('⚠️ Ingresa correo y contraseña')),
+      );
+    }
+  }
+
+  // Registrar nuevo usuario
+  Future<void> registrarUsuario(BuildContext context) async {
+    String email = emailCtrl.text.trim();
+    String pass = passCtrl.text.trim();
+
+    if (email.isNotEmpty && pass.isNotEmpty) {
+      try {
+        QuerySnapshot snapshot = await FirebaseFirestore.instance
+            .collection('usuarios')
+            .where('correo', isEqualTo: email)
+            .get();
+
+        if (snapshot.docs.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('⚠️ Este usuario ya ha sido registrado.')),
+          );
+        } else {
           await FirebaseFirestore.instance.collection('usuarios').add({
             'correo': email,
             'contrasena': pass,
             'fecha': Timestamp.now(),
           });
+
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('✅ Nuevo usuario registrado. Iniciando sesión...')),
+            SnackBar(content: Text('✅ Usuario registrado exitosamente. Iniciando sesión...')),
           );
-          // Navegar a la pantalla de Canchas
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => CanchasPage()),
@@ -47,7 +77,7 @@ class LoginPage extends StatelessWidget {
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('❌ Error al procesar la solicitud')),
+          SnackBar(content: Text('❌ Error al registrar el usuario')),
         );
       }
     } else {
@@ -109,7 +139,7 @@ class LoginPage extends StatelessWidget {
                   width: double.infinity,
                   height: 45,
                   child: ElevatedButton(
-                    onPressed: () => verificarUsuario(context),
+                    onPressed: () => iniciarSesion(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green.shade600,
                       foregroundColor: Colors.white,
@@ -119,6 +149,23 @@ class LoginPage extends StatelessWidget {
                       elevation: 5,
                     ),
                     child: Text('Iniciar Sesión'),
+                  ),
+                ),
+                SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: ElevatedButton(
+                    onPressed: () => registrarUsuario(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade800,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      elevation: 5,
+                    ),
+                    child: Text('Registrarse'),
                   ),
                 ),
               ],
