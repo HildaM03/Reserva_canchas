@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'login_page.dart';
-import 'firebase_options.dart'; // Este archivo se genera con flutterfire configure
+import 'firebase_options.dart'; // Generado con `flutterfire configure`
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'Login Firebase',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: LoginPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

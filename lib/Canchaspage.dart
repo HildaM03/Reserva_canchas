@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
+import 'package:cached_network_image/cached_network_image.dart'; // IMPORTANTE
+import 'ReservaPage.dart'; // Asegúrate de tener este archivo
 
 class CanchasPage extends StatelessWidget {
   final List<Map<String, String>> canchas = [
@@ -20,8 +22,7 @@ class CanchasPage extends StatelessWidget {
     {
       'nombre': 'Cancha Rancho Tara',
       'imagen':
-      'https://media.istockphoto.com/id/1610631888/es/foto/ni%C3%B1o-jugando-al-f%C3%BAtbol-en-el-parque-local.webp?a=1&b=1&s=612x612&w=0&k=20&c=WOL1stc3wtdT2KhxUvat4xd-6XclIed9hU_RBTd1QRA='
-    ,
+          'https://media.istockphoto.com/id/1610631888/es/foto/ni%C3%B1o-jugando-al-f%C3%BAtbol-en-el-parque-local.webp?a=1&b=1&s=612x612&w=0&k=20&c=WOL1stc3wtdT2KhxUvat4xd-6XclIed9hU_RBTd1QRA=',
     },
     {
       'nombre': 'Campisa',
@@ -39,7 +40,7 @@ class CanchasPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Canchas Disponibles'),
+        title: Text('Canchas'),
         backgroundColor: Colors.green.shade600,
       ),
       body: Padding(
@@ -50,8 +51,11 @@ class CanchasPage extends StatelessWidget {
             final cancha = canchas[index];
             return GestureDetector(
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('¡Seleccionaste ${cancha['nombre']}!')),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ReservaPage(canchaNombre: cancha['nombre']!),
+                  ),
                 );
               },
               child: Card(
@@ -63,21 +67,27 @@ class CanchasPage extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 child: Stack(
                   children: [
-                    // Imagen
-                    Ink.image(
-                      image: NetworkImage(cancha['imagen']!),
+                    CachedNetworkImage(
+                      imageUrl: cancha['imagen']!,
                       height: 200,
+                      width: double.infinity,
                       fit: BoxFit.cover,
-                      child: InkWell(onTap: () {}),
+                      placeholder: (context, url) => Container(
+                        height: 200,
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        height: 200,
+                        color: Colors.grey[300],
+                        child: Icon(Icons.error, size: 40, color: Colors.red),
+                      ),
                     ),
-                    // Título superpuesto
                     Positioned(
                       bottom: 0,
                       left: 0,
                       right: 0,
                       child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [Colors.black54, Colors.transparent],
@@ -92,10 +102,7 @@ class CanchasPage extends StatelessWidget {
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             shadows: [
-                              Shadow(
-                                  blurRadius: 5,
-                                  color: Colors.black,
-                                  offset: Offset(1, 1))
+                              Shadow(blurRadius: 5, color: Colors.black, offset: Offset(1, 1)),
                             ],
                           ),
                         ),

@@ -6,7 +6,6 @@ class LoginPage extends StatelessWidget {
   final TextEditingController emailCtrl = TextEditingController();
   final TextEditingController passCtrl = TextEditingController();
 
-  // Iniciar sesión (solo si ya existe)
   Future<void> iniciarSesion(BuildContext context) async {
     String email = emailCtrl.text.trim();
     String pass = passCtrl.text.trim();
@@ -43,7 +42,6 @@ class LoginPage extends StatelessWidget {
     }
   }
 
-  // Registrar nuevo usuario
   Future<void> registrarUsuario(BuildContext context) async {
     String email = emailCtrl.text.trim();
     String pass = passCtrl.text.trim();
