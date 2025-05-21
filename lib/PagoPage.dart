@@ -10,7 +10,12 @@ class _PagoPageState extends State<PagoPage> {
   String metodoPago = 'Transferencia';
   final _formKey = GlobalKey<FormState>();
 
-  String numeroCuenta = '';
+  // Campos nuevos
+  String cuentaOrigen = '';
+  String cuentaDestino = '';
+  String numeroComprobante = '';
+
+  // Campos ya existentes
   String nombreTitular = '';
   String monto = '';
   String detalle = '';
@@ -19,7 +24,9 @@ class _PagoPageState extends State<PagoPage> {
     try {
       await FirebaseFirestore.instance.collection('pago').add({
         'metodo': metodoPago,
-        'cuenta': numeroCuenta,
+        'cuenta_origen': cuentaOrigen,
+        'cuenta_destino': cuentaDestino,
+        'comprobante': numeroComprobante,
         'titular': nombreTitular,
         'monto': monto,
         'detalle': detalle,
@@ -39,19 +46,23 @@ class _PagoPageState extends State<PagoPage> {
       context: context,
       builder: (_) => AlertDialog(
         title: Text('Ticket de Pago'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Método: $metodoPago'),
-            if (metodoPago == 'Transferencia') ...[
-              Text('Cuenta: $numeroCuenta'),
-              Text('Titular: $nombreTitular'),
-              Text('Monto: \$${monto}'),
-              Text('Detalle: $detalle'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Método: $metodoPago'),
+              if (metodoPago == 'Transferencia') ...[
+                Text('Cuenta Origen: $cuentaOrigen'),
+                Text('Cuenta Destino: $cuentaDestino'),
+                Text('Número de Comprobante: $numeroComprobante'),
+                Text('Titular: $nombreTitular'),
+                Text('Monto: \$${monto}'),
+                Text('Detalle: $detalle'),
+              ],
+              Text('Fecha: ${DateTime.now()}'),
             ],
-            Text('Fecha: ${DateTime.now()}'),
-          ],
+          ),
         ),
         actions: [
           TextButton(
@@ -90,58 +101,93 @@ class _PagoPageState extends State<PagoPage> {
             Text('Selecciona el método de pago:', style: TextStyle(fontWeight: FontWeight.bold)),
             DropdownButton<String>(
               value: metodoPago,
-              items: ['Transferencia', 'Efectivo'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              items: ['Transferencia', 'Efectivo']
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
               onChanged: (val) => setState(() => metodoPago = val!),
             ),
             SizedBox(height: 20),
             metodoPago == 'Transferencia'
                 ? Form(
                     key: _formKey,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Número de cuenta',
-                            border: OutlineInputBorder(),
-                          ),
-                          onChanged: (val) => numeroCuenta = val,
-                          validator: (val) => val == null || val.isEmpty ? 'Ingresa el número de cuenta' : null,
+                    child: Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Cuenta de Origen',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (val) => cuentaOrigen = val,
+                              validator: (val) => val == null || val.isEmpty
+                                  ? 'Ingresa la cuenta de origen'
+                                  : null,
+                            ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Cuenta de Destino',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (val) => cuentaDestino = val,
+                              validator: (val) => val == null || val.isEmpty
+                                  ? 'Ingresa la cuenta de destino'
+                                  : null,
+                            ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Número de Comprobante',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (val) => numeroComprobante = val,
+                              validator: (val) => val == null || val.isEmpty
+                                  ? 'Ingresa el número de comprobante'
+                                  : null,
+                            ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Nombre del titular',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (val) => nombreTitular = val,
+                              validator: (val) => val == null || val.isEmpty
+                                  ? 'Ingresa el nombre del titular'
+                                  : null,
+                            ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Monto a transferir',
+                                border: OutlineInputBorder(),
+                              ),
+                              keyboardType: TextInputType.number,
+                              onChanged: (val) => monto = val,
+                              validator: (val) =>
+                                  val == null || val.isEmpty ? 'Ingresa el monto' : null,
+                            ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Detalle o descripción',
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (val) => detalle = val,
+                              validator: (val) =>
+                                  val == null || val.isEmpty ? 'Ingresa un detalle' : null,
+                            ),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: _confirmarPago,
+                              child: Text('Confirmar Pago'),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green.shade700),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Nombre del titular',
-                            border: OutlineInputBorder(),
-                          ),
-                          onChanged: (val) => nombreTitular = val,
-                          validator: (val) => val == null || val.isEmpty ? 'Ingresa el nombre del titular' : null,
-                        ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Monto a transferir',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged: (val) => monto = val,
-                          validator: (val) => val == null || val.isEmpty ? 'Ingresa el monto' : null,
-                        ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Detalle o descripción',
-                            border: OutlineInputBorder(),
-                          ),
-                          onChanged: (val) => detalle = val,
-                          validator: (val) => val == null || val.isEmpty ? 'Ingresa un detalle' : null,
-                        ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: _confirmarPago,
-                          child: Text('Confirmar Pago'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade700),
-                        ),
-                      ],
+                      ),
                     ),
                   )
                 : Padding(
@@ -162,7 +208,8 @@ class _PagoPageState extends State<PagoPage> {
                             );
                           },
                           child: Text('Confirmar Pago en Efectivo'),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade700),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green.shade700),
                         ),
                       ],
                     ),
