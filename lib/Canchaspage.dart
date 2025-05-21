@@ -7,12 +7,12 @@ class CanchasPage extends StatelessWidget {
     {
       'nombre': 'SportMania',
       'imagen':
-          'https://scontent.fsap12-1.fna.fbcdn.net/v/t39.30808-6/489787440_29434847472795932_8830267978180362267_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=108&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=ey9XhkOTiZoQ7kNvwGjxiuw&_nc_oc=AdltDweIoO8THuMbvQcDoE6h8YkB_HckUQ6eQyn87QbN5q0CHtD1ecjfS3FFWUjhsxY&_nc_zt=23&_nc_ht=scontent.fsap12-1.fna&_nc_gid=C4mW_5jjMvSudpMEOOHMbQ&oh=00_AfJPLexBWa2k9lfzdJVWQIw9N7MsYTEgmZyiMoIv4Ndf_Q&oe=682D79C5',
+          'https://scontent.fsap12-1.fna.fbcdn.net/v/t39.30808-6/322876158_554170996568371_4651767928234651329_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=95Iiu4DWQ_EQ7kNvwGCv8D_&_nc_oc=Adn0a7WTORlzZISJ_7m_UCutZJnLx8MRZTVnI-kcrdHVWBXSXXiZWeBuBoVU_fW3T2U&_nc_zt=23&_nc_ht=scontent.fsap12-1.fna&_nc_gid=fYdW7URaXIm7JWbKJFR3pg&oh=00_AfLJPo4F3KLfYgsD6rIJ1xCywtVa3cRUppW1t10Qp4kakQ&oe=6833D2D0',
     },
     {
       'nombre': 'Maracana Palenque',
       'imagen':
-          'https://scontent.fsap12-1.fna.fbcdn.net/v/t39.30808-6/305297731_519801253481214_1238331527813895484_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=0ewi9xTwvCAQ7kNvwHsE24m&_nc_oc=Adml5mTy13RALuS5gnkpX4xchyXWmgFvU7jPIRJghuTMjW6CrhqXmzC0ShkRIH1DKbs&_nc_zt=23&_nc_ht=scontent.fsap12-1.fna&_nc_gid=vjyOfBG9vag50J2bAZzyxA&oh=00_AfJVRBnBqiHBODxDOkWVGFEhCc3AP-UaBpRkq-HfBb7vHg&oe=682D7FB8',
+          'https://scontent.fsap12-1.fna.fbcdn.net/v/t39.30808-6/305297731_519801253481214_1238331527813895484_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=oNjJ6TrlutQQ7kNvwGJbCDk&_nc_oc=AdkBZjU1hmZqrryA5PsD8woF9evKxq1MM2djO0AgMe8FPDsfaUBLM9JyGsSM_48qc-0&_nc_zt=23&_nc_ht=scontent.fsap12-1.fna&_nc_gid=3GSi5W7rcrNp61-JHi92Bw&oh=00_AfJYG6VTSxttoW84a4jHvCvTNY3YB_RBG4lvfA7CjVPtRQ&oe=6833DEF8',
     },
     {
       'nombre': 'Los Castaños',
