@@ -1,13 +1,14 @@
-  import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:resrevacion_canchas/PagoPage.dart';
 
 class ReservaPage extends StatefulWidget {
   final String canchaNombre;
-
-  const ReservaPage({Key? key, required this.canchaNombre}) : super(key: key);
+  ReservaPage({required this.canchaNombre});
 
   @override
-  State<ReservaPage> createState() => _ReservaPageState();
+  _ReservaPageState createState() => _ReservaPageState();
 }
 
 class _ReservaPageState extends State<ReservaPage> {
@@ -15,14 +16,16 @@ class _ReservaPageState extends State<ReservaPage> {
 
   final List<String> canchas = ['Cancha 1', 'Cancha 2', 'Cancha 3'];
   final List<String> horarios = [
-    '08:00 - 09:30',
-    '09:30 - 11:00',
-    '11:00 - 12:30',
-    '12:30 - 14:00',
-    '14:00 - 15:30',
-    '15:30 - 17:00',
-    '17:00 - 18:30',
-    '18:30 - 20:00',
+    '08:00 AM - 09:30 AM',
+    '09:30 AM - 11:00 AM',
+    '11:00 AM - 12:30 PM',
+    '12:30 PM - 02:00 PM',
+    '02:00 PM - 03:30 PM',
+    '03:30 PM - 05:00 PM',
+    '05:00 PM - 06:30 PM',
+    '06:30 PM - 08:00 PM',
+    '08:00 PM - 09:30 PM',
+    '09:30 PM - 10:30 PM',
   ];
 
   String? selectedCancha;
@@ -50,35 +53,63 @@ class _ReservaPageState extends State<ReservaPage> {
     }
   }
 
-  void _reservar() {
+  Future<void> _reservar() async {
     if (_formKey.currentState!.validate()) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Ticket de Reserva'),
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Cancha: $selectedCancha'),
-                  Text('Fecha: ${formatDate(selectedDate)}'),
-                  Text('Hora: $selectedHora'),
-                  Text('Reservado por: $quienReserva'),
-                  Text('Equipo: $equipoNombre'),
-                  Text('Jugadores:\n$jugadores'),
-                ],
+      // Crear mapa con los datos de la reserva
+      Map<String, dynamic> reservaData = {
+        'cancha': selectedCancha,
+        'fecha': Timestamp.fromDate(selectedDate),
+        'hora': selectedHora,
+        'quienReserva': quienReserva,
+        'equipoNombre': equipoNombre,
+        'jugadores': jugadores,
+        'timestamp': Timestamp.now(),  // Fecha y hora de registro
+      };
+
+      try {
+        // Guardar en Firestore en la colección "reservas"
+        await FirebaseFirestore.instance.collection('reservas').add(reservaData);
+
+        // Mostrar ticket de reserva
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Ticket de Reserva'),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Cancha: $selectedCancha'),
+                    Text('Fecha: ${formatDate(selectedDate)}'),
+                    Text('Hora: $selectedHora'),
+                    Text('Reservado por: $quienReserva'),
+                    Text('Equipo: $equipoNombre'),
+                    Text('Jugadores:\n$jugadores'),
+                  ],
+                ),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('Cerrar'),
-              ),
-            ],
-          );
-        },
-      );
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Cerrar ticket
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PagoPage()), // Tu pantalla de pago
+                    );
+                  },
+                  child: Text('Continuar al Pago'),
+                ),
+              ],
+            );
+          },
+        );
+      } catch (e) {
+        // Si hay error al guardar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al registrar la reserva: $e')),
+        );
+      }
     }
   }
 
